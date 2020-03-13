@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils import action_map_small, gen_sequence, get_all_possible_actions_cube_small, chunker, flatten_1d_b
 
-env = gym.make('CartPole-v0')
-
 gamma = 0.99
 
 def discount_rewards(r):
@@ -142,42 +140,6 @@ with tf.Session() as sess:
 		if i%5 == 0:
 			print("yay")
 
-
-
-		# s = env.reset()
-		# running_reward = 0
-		# ep_history = []
-		# for j in range(max_ep):
-		#     #Probabilistically pick an action given our network outputs.
-		#     a_dist = sess.run(myAgent.output,feed_dict={myAgent.state_in:[s]})
-		#     a = np.random.choice(a_dist[0],p=a_dist[0])
-		#     a = np.argmax(a_dist == a)
-
-		#     s1,r,d,_ = env.step(a) #Get our reward for taking an action given a bandit.
-		#     ep_history.append([s,a,r,s1])
-		#     s = s1
-		#     running_reward += r
-		#     if d == True:
-		#         #Update the network.
-		#         ep_history = np.array(ep_history)
-		#         ep_history[:,2] = discount_rewards(ep_history[:,2])
-		#         feed_dict={myAgent.reward_holder:ep_history[:,2],
-		#                 myAgent.action_holder:ep_history[:,1],myAgent.state_in:np.vstack(ep_history[:,0])}
-		#         grads = sess.run(myAgent.gradients, feed_dict=feed_dict)
-		#         for idx,grad in enumerate(grads):
-		#             gradBuffer[idx] += grad
-
-		#         if i % update_frequency == 0 and i != 0:
-		#             feed_dict= dictionary = dict(zip(myAgent.gradient_holders, gradBuffer))
-		#             _ = sess.run(myAgent.update_batch, feed_dict=feed_dict)
-		#             for ix,grad in enumerate(gradBuffer):
-		#                 gradBuffer[ix] = grad * 0
-				
-		#         total_reward.append(running_reward)
-		#         total_length.append(j)
-		#         break
-
-		
-			#Update our running tally of scores.
+		#Update our running tally of scores.
 		if i % 100 == 0:
 			print(np.mean(total_reward[-100:]))
