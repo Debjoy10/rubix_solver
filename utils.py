@@ -7,12 +7,15 @@ action_map = {'F': 0, 'B': 1, 'U': 2, 'D': 3, 'L': 4, 'R': 5, "F'": 6, "B'": 7, 
               'F2': 12, 'B2': 13, 'U2': 14, 'D2': 15, 'L2': 16, 'R2': 17, "F2'": 18, "B2'": 19, "U2'": 20, "D2'": 21,
               "L2'": 22, "R2'": 23}
 action_map_small = {'F': 0, 'B': 1, 'U': 2, 'D': 3, 'L': 4, 'R': 5, "F'": 6, "B'": 7, "U'": 8, "D'": 9, "L'": 10, "R'": 11}
+
+# new_action_map   =  OrderedDict([("R",0), ("L",1),("D",2),("U",3),("B", 4),("F", 5),("R'", 6), ("L'", 7),("D'", 8),("U'", 9),("B'", 10),("F'", 11)])
+
+
 inv_action_map = {v: k for k, v in action_map.items()}
 color_map = {'green': 0, 'blue': 1, 'yellow': 2, 'red': 3, 'orange': 4, 'white': 5}
 
 color_list_map = {'green': [1, 0, 0, 0, 0, 0], 'blue': [0, 1, 0, 0, 0, 0], 'yellow': [0, 0, 1, 0, 0, 0],
                   'red': [0, 0, 0, 1, 0, 0], 'orange': [0, 0, 0, 0, 1, 0], 'white': [0, 0, 0, 0, 0, 1]}
-
 
 def flatten(cube):
     sides = [cube.F, cube.B, cube.U, cube.D, cube.L, cube.R]
@@ -151,21 +154,26 @@ def reward(cube):
     return(2*int(perc_solved_cube(cube)>0.99)-1)
 
 def reward_sparse(cube):
-    return(2*int(perc_solved_cube(cube)==1)-1)
+    return(1000*int(perc_solved_cube(cube)==1)-1)
 
 def get_all_possible_actions_cube_small(cube):
 
     flat_cubes = []
     rewards = []
+    acts = []
 
     for a in action_map_small:
         cube_copy = cube.copy()
         cube_copy = cube_copy(a)
         flat_cubes.append(flatten_1d_b(cube_copy))
         rewards.append(reward_sparse(cube_copy))
+        acts.append(a)
 
-    return flat_cubes, rewards
+    return flat_cubes, rewards, acts
 
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
+
+cube = pc.Cube()
+print(get_all_possible_actions_cube_small(cube)[2])
