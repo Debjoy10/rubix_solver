@@ -8,17 +8,6 @@ from utils import action_map_small, gen_sequence, get_all_possible_actions_cube_
 
 gamma = 0.99
 
-action_list = ["R", "L","D","U","B","F","R'", "L'","D'","U'","B'","F'"]
-
-def discount_rewards(r):
-	""" take 1D float array of rewards and compute discounted reward """
-	discounted_r = np.zeros_like(r)
-	running_add = 0
-	for t in reversed(range(0, r.size)):
-		running_add = running_add * gamma + r[t]
-		discounted_r[t] = running_add
-	return discounted_r
-
 class agent():
 	def __init__(self, lr, s_size,a_size,h1_size,h2_size):
 		#These lines established the feed-forward part of the network. The agent takes a state and produces an action.

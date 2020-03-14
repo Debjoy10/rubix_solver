@@ -45,46 +45,59 @@ with tf.Session() as sess:
     # Load the model
     saver.restore(sess, "./models/model.ckpt")
 
-    while(1):
-        print("New Episode")
-        sh = input("Shuffle : ") 
+    # while(1):
+    print("New Episode")
+    saa = int(input("Shuffle : ") )
 
-        cube = pc.Cube()
-        transformation = [choice(list(action_map_small.keys())) for _ in range(int(sh))]
-        my_formula = pc.Formula(transformation)
-        cube(my_formula)
+    cube = pc.Cube()
+    transformation = [choice(list(action_map_small.keys())) for z in range(saa)]
+    my_formula = pc.Formula(transformation)
+    cube(my_formula)
 
-        run = True
-        print("****************************************************************************************************")
-        print("START : ")
+    run = True
+    print("****************************************************************************************************")
+    print("START : ")
+    
+
+    print([cube])
+    print("****************************************************************************************************")
+    time.sleep(3)
+
+    while run:            
+
+        if perc_solved_cube(cube) == 1:
+            run = False
+            print("Solved")
+            break
+        # Take the biggest Q value (= the best action)
+        flat_cube = np.array(flatten_1d_b(cube)).reshape([1, 324])
+
+        Qs = sess.run(myAgent.output, feed_dict = {myAgent.state_in: flat_cube})
+        # print("Ideal : "+str(my_formula.reverse()))
+        print("Q values:")
+        print(Qs)
+
+        # Take the biggest Q value (= the best action)
+        choice = np.argmax(Qs)
         
+        # lookup     = ["R", "L","D","U","B","F","R'", "L'","D'","U'","B'","F'"] #We are not accounting for half turns
+        acti_map = {'F': 0, 'B': 1, 'U': 2, 'D': 3, 'L': 4, 'R': 5, "F'": 6, "B'": 7, "U'": 8, "D'": 9, "L'": 10, "R'": 11}
+
+        action = ""
+        for act, val in acti_map.items():
+            if val == choice:
+                action = act
+
+        print("Taken: "+str(action))
+        # step_taken = pc.Formula(lookup[choice])
+        step_taken = pc.Formula(action)
+        cube(step_taken) 
 
         print([cube])
-        print("****************************************************************************************************")
-        time.sleep(3)
-
-        while run:            
-
-            if perc_solved_cube(cube) == 1:
-                run = False
-                print("Solved")
-                break
-            # Take the biggest Q value (= the best action)
-            flat_cube = np.array(flatten_1d_b(cube)).reshape([1, 324])
-
-            Qs = sess.run(myAgent.output, feed_dict = {myAgent.state_in: flat_cube})
-
-            # Take the biggest Q value (= the best action)
-            choice = np.argmax(Qs)
-            
-            lookup     = ["R", "L","D","U","B","F","R'", "L'","D'","U'","B'","F'"] #We are not accounting for half turns
-            step_taken = pc.Formula(lookup[choice])
-            cube(step_taken) 
-
-            print([cube])
-            score = perc_solved_cube(cube)
-            print("Running score = "+str(score))
-            
-            if score == 1:
-                run = False  
+        score = perc_solved_cube(cube)
+        print("Running score = "+str(score))
+        
+        if score == 1:
+            print("Episode Finished")
+            run = False  
                 
