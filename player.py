@@ -1,5 +1,12 @@
+import warnings
+warnings.filterwarnings('ignore',category=FutureWarning)
+
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+
 import numpy as np
 import gym
 import matplotlib.pyplot as plt
@@ -44,6 +51,7 @@ with tf.Session() as sess:
     
     # Load the model
     saver.restore(sess, "./models/model.ckpt")
+    # saver.restore(sess, "./best_model/model.ckpt")
 
     # while(1):
     print("New Episode")
@@ -55,12 +63,12 @@ with tf.Session() as sess:
     cube(my_formula)
 
     run = True
-    print("****************************************************************************************************")
+    print("********************************************************")
     print("START : ")
     
 
     print([cube])
-    print("****************************************************************************************************")
+    print("********************************************************")
     time.sleep(3)
 
     while run:            
@@ -96,6 +104,8 @@ with tf.Session() as sess:
         print([cube])
         score = perc_solved_cube(cube)
         print("Running score = "+str(score))
+
+        time.sleep(2)
         
         if score == 1:
             print("Episode Finished")

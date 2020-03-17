@@ -175,7 +175,3 @@ def get_all_possible_actions_cube_small(cube):
 
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-
-
-cube = pc.Cube()
-print(get_all_possible_actions_cube_small(cube)[2])

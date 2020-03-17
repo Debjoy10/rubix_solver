@@ -58,7 +58,7 @@ with tf.Session() as sess:
 	total_reward = []
 	total_length = []
 		
-	n_samples = 1
+	n_samples = 10
 	for i in tqdm(range(total_episodes)):
 		cubes = []
 		distance_to_solved = []
@@ -86,33 +86,36 @@ with tf.Session() as sess:
 			cube_flat.append(flatten_1d_b(c))
 
 		print("\n ---All actions noted")
-		cube_target_policy = []
-		cube_target_value = []
-		action_value = []
 
-		# Probabilistically pick an action given our network outputs.
-		next_state_value = sess.run(myAgent.output,feed_dict={myAgent.state_in:np.array(flat_next_states)})
-		action = [np.argmax(act) for act in next_state_value]
+		for _ in range(20):
+			cube_target_policy = []
+			cube_target_value = []
+			action_value = []
 
-		for c, rewards, values in tqdm(zip(cubes, cube_next_reward, next_state_value)):
-			r_plus_v = np.array(rewards) + gamma*np.array(values)
-			target_v = np.max(r_plus_v)
-			target_p = np.argmax(r_plus_v) 
+			# Probabilistically pick an action given our network outputs.
+			next_state_value = sess.run(myAgent.output,feed_dict={myAgent.state_in:np.array(flat_next_states)})
+			action = [np.argmax(act) for act in next_state_value]
 
-			cube_target_value.append(target_v)
-			cube_target_policy.append(target_p)
+			for c, rewards, values in tqdm(zip(cubes, cube_next_reward, next_state_value)):
+				r_plus_v = np.array(rewards) + gamma*np.array(values)
+				target_v = np.max(r_plus_v)
+				target_p = np.argmax(r_plus_v) 
 
-			actval = np.zeros(12)
-			actval[target_p] = 1
-			action_value.append(actval)
+				cube_target_value.append(target_v)
+				cube_target_policy.append(target_p)
 
-		loss, _ = sess.run([myAgent.loss, myAgent.optimizer], feed_dict={myAgent.state_in: np.array(cube_flat), myAgent.target_Q: np.array(cube_target_value), myAgent.actions_: np.array(action_value)})
+				actval = np.zeros(12)
+				actval[target_p] = 1
+				action_value.append(actval)
 
-		# Write TF Summaries
-		summary = sess.run(write_op, feed_dict={myAgent.state_in: np.array(cube_flat), myAgent.target_Q: np.array(cube_target_value), myAgent.actions_: np.array(action_value)})
-		writer.add_summary(summary, i)
-		writer.flush()
-		print("LOSS: "+str(loss))
+			loss, _ = sess.run([myAgent.loss, myAgent.optimizer], feed_dict={myAgent.state_in: np.array(cube_flat), myAgent.target_Q: np.array(cube_target_value), myAgent.actions_: np.array(action_value)})
+
+			# Write TF Summaries
+			summary = sess.run(write_op, feed_dict={myAgent.state_in: np.array(cube_flat), myAgent.target_Q: np.array(cube_target_value), myAgent.actions_: np.array(action_value)})
+			writer.add_summary(summary, i)
+			writer.flush()
+			print("LOSS: "+str(loss))
+
 
 		# Save model every 5 episodes
 		if i % 5 == 0:
