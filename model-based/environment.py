@@ -6,7 +6,7 @@ from collections import OrderedDict
 from scipy.stats import mode
 
 class cube:
-	def __init__(self, params = {"max_shuffles": 6, "action_space": "small"}):
+	def __init__(self, params = {"max_shuffles": 6, "action_space": "small", "definite": False}):
 
 		# Mapping ALL actions to numeric values.
 		action_map_large = {'F': 0, 'B': 1, 'U': 2, 'D': 3, 'L': 4, 'R': 5, "F'": 6, "B'": 7, "U'": 8, "D'": 9, "L'": 10, "R'": 11,
