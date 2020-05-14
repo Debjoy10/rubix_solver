@@ -14,8 +14,8 @@ import json
 
 # Prepare Random samples for Value Function Iteration
 def generate_samples():
-	MAX_STEPS = 10
-	params =  {"max_shuffles": 0, "action_space": "small"}
+	MAX_STEPS = 20
+	params =  {"max_shuffles": 0, "action_space": "small", "definite": False}
 	env = cube(params)
 
 	curr_value = env.max_reward
@@ -92,10 +92,10 @@ def train(SHUFFLE_BUFFER_SIZE = 100, BATCH_SIZE = 32):
 	return model
 
 def save(model):
-	model.save('/tmp/model')
+	model.save('./model/')
 
 def load():
-	loaded_model = tf.keras.models.load_model('/tmp/model')
+	loaded_model = tf.keras.models.load_model('./model/')
 	return loaded_model
 
 model = train()
